@@ -23,7 +23,11 @@ add_executable(NetSentry
         Sniffer.cpp
         Sniffer.h
         Types.cpp
-        Types.h)
+        Types.h
+        FlowManager.cpp
+        FlowManager.h
+        FeatureExtractor.cpp
+        FeatureExtractor.h)
 
 target_link_libraries(NetSentry PRIVATE
         PcapPlusPlus::Pcap++
