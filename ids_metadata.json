@@ -1,0 +1,51 @@
+{
+  "feature_names": [
+    "Flow Duration",
+    "Total Fwd Packets",
+    "Total Backward Packets",
+    "Fwd Packets Length Total",
+    "Bwd Packets Length Total",
+    "Fwd Packet Length Max",
+    "Fwd Packet Length Mean",
+    "Bwd Packet Length Max",
+    "Bwd Packet Length Mean",
+    "Flow Bytes/s",
+    "Flow IAT Mean",
+    "Flow IAT Std",
+    "Fwd IAT Total",
+    "Fwd IAT Std",
+    "Fwd Header Length",
+    "Fwd Packets/s",
+    "Bwd Packets/s",
+    "Packet Length Std",
+    "FIN Flag Count",
+    "SYN Flag Count",
+    "RST Flag Count",
+    "PSH Flag Count",
+    "ACK Flag Count",
+    "Down/Up Ratio",
+    "Avg Packet Size",
+    "Init Fwd Win Bytes",
+    "Init Bwd Win Bytes",
+    "Fwd Seg Size Min",
+    "Active Mean",
+    "Idle Mean"
+  ],
+  "classes": [
+    "Benign",
+    "Botnet_Infiltration",
+    "BruteForce",
+    "DDoS",
+    "DoS",
+    "Web Attack"
+  ],
+  "thresholds": [
+    0.85,
+    0.9,
+    0.85,
+    0.85,
+    0.85,
+    0.9
+  ],
+  "benign_idx": 0
+}
