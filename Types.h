@@ -11,6 +11,11 @@
 #include <array>
 #include <string>
 constexpr size_t NUM_FEATURES = 30;
+struct InterfaceInfo {
+    std::string name;
+    std::string description;
+    std::string ipv4;
+};
 class PacketMetaData {
 private:
     uint64_t time_stamp_us = 0;
@@ -22,7 +27,7 @@ private:
     uint16_t dst_port = 0;
     uint8_t protocol = 0;
     uint8_t tcp_flag = 0;
-    uint16_t tcp_window = 0;
+    uint32_t tcp_window = 0;
     uint16_t header_len = 0;
 public:
     uint16_t get_tcp_window ()const{return tcp_window;};
