@@ -27,7 +27,9 @@ add_executable(NetSentry
         FlowManager.cpp
         FlowManager.h
         FeatureExtractor.cpp
-        FeatureExtractor.h)
+        FeatureExtractor.h
+        Engine.cpp
+        Engine.h)
 
 target_link_libraries(NetSentry PRIVATE
         PcapPlusPlus::Pcap++
