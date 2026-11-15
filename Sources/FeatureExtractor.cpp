@@ -1,7 +1,7 @@
 //
 // Created by mohammed on 13/11/2026.
 //
-#include "FeatureExtractor.h"
+#include "../Headers/FeatureExtractor.h"
 #include <fstream>
 #include <cmath>
 #include <algorithm>
@@ -47,7 +47,7 @@ FeatureVector FeatureExtractor::extract(
     const FlowStats& stats,
     bool apply_scaling) const {
 
-    std::array<float, NUM_FEATURES> f{};
+    std::vector<float> f;
 
     const uint64_t dur_us       = stats.duration_us();
     const double   dur_sec      = static_cast<double>(dur_us) / 1e6;
@@ -117,7 +117,7 @@ FeatureVector FeatureExtractor::extract(
 
     // down and up ration
     f[23] = (fwd_pkts > 0)
-                ? static_cast<float>(bwd_pkts / fwd_pkts)
+                ? static_cast<float>(bwd_pkts) / fwd_pkts
                 : 0.0f;
 
     // avg pacjet size

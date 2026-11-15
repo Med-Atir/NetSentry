@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>AlertForm</class>
+ <widget class="QWidget" name="AlertForm">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>918</width>
+    <height>594</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QWidget#AlertForm {
+    background-color: #0f172a;
+    color: #e2e8f0;
+    font-family: &quot;Inter&quot;, &quot;Segoe UI&quot;, sans-serif;
+    font-size: 13px;
+}
+
+/* === Tableau de l'historique des alertes === */
+QTableWidget#tableAlerts {
+    background-color: #111827;
+    alternate-background-color: #162032;
+    color: #e2e8f0;
+    gridline-color: #1e293b;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    selection-background-color: rgba(56, 189, 248, 0.22);
+    selection-color: #ffffff;
+}
+
+QTableWidget#tableAlerts::item {
+    padding: 6px 8px;
+    border-bottom: 1px solid #1e293b;
+}
+
+QHeaderView::section {
+    background-color: #1e293b;
+    color: #94a3b8;
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    padding: 8px;
+    border: none;
+    border-right: 1px solid #334155;
+    border-bottom: 1px solid #334155;
+}
+
+/* === Bouton Clear (action destructive) === */
+QPushButton#clear {
+    background-color: rgba(239, 68, 68, 0.18);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.45);
+    border-radius: 6px;
+    padding: 8px 20px;
+    font-weight: 600;
+}
+
+QPushButton#clear:hover {
+    background-color: #dc2626;
+    color: #ffffff;
+}
+
+QPushButton#clear:pressed {
+    background-color: #b91c1c;
+}</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QTableWidget" name="tableAlerts">
+     <column>
+      <property name="text">
+       <string>Time</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Src IP</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Dst IP</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Src Port</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Dst Port</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Protocol</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Score</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Attack Type</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Severity</string>
+      </property>
+     </column>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="clear">
+     <property name="text">
+      <string>Clear ALL</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -2,7 +2,7 @@
 // Created by mohammed on 12/11/2026.
 //
 
-#include "Types.h"
+#include "../Headers/Types.h"
 
 bool FlowKey::operator==(const FlowKey &t)const{
         return this->ip_a == t.ip_a && this->ip_b == t.ip_b && this->port_a == t.port_a && this->port_b == t.port_b && this->protocol == t.protocol;
@@ -134,4 +134,17 @@ double FlowStats::iat_std() const {
         if (total_packets() >1)
                 return std::sqrt(std::max(0.0,(sum_sq_iat_us/(total_packets()-1))-(mean*mean)));
         return 0.0;
+}
+double FlowStats::fwd_iat_std() const {
+    if (fwd_packets > 1) {
+        const double mean = sum_fwd_iat_us / (fwd_packets - 1);
+        return std::sqrt(std::max(0.0, (sum_sq_fwd_iat_us / (fwd_packets - 1)) - (mean * mean)));
+    }
+    return 0.0;
+}
+double FlowStats::active_mean() const {
+    return (active_count > 0) ? (sum_active_us / active_count) : 0.0;
+}
+double FlowStats::idle_mean() const {
+    return (idle_count > 0) ? (sum_idle_us / idle_count) : 0.0;
 }

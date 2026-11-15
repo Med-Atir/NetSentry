@@ -267,7 +267,7 @@ class FeatureVector {
 private:
     FlowKey flow_key_;
     uint64_t timestamp_us_ = 0;
-    std::array<float, NUM_FEATURES> features_{};
+    std::vector<float> features_{};
 
 public:
     const FlowKey& get_flow_key() const { return flow_key_; }
@@ -276,9 +276,9 @@ public:
     uint64_t get_timestamp_us() const { return timestamp_us_; }
     void set_timestamp_us(uint64_t ts) { timestamp_us_ = ts; }
 
-    const std::array<float, NUM_FEATURES>& get_features() const { return features_; }
-    std::array<float, NUM_FEATURES>& mutable_features() { return features_; }
-    void set_features(const std::array<float, NUM_FEATURES>& feats) { features_ = feats; }
+    const std::vector<float>& get_features() const { return features_; }
+    std::vector<float>& mutable_features() { return features_; }
+    void set_features(const std::vector<float>& feats) { features_ = feats; }
 };
 enum class Severity : uint8_t {
         Low = 0,
@@ -295,6 +295,12 @@ inline std::string severity_to_string(Severity severity) {
                 case Severity::Critical: return "CRITICAL";
                 default:                 return "UNKNOWN";
         }
+}
+inline Severity string_to_severity(const std::string& str) {
+    if (str == "CRITICAL") return Severity::Critical;
+    if (str == "HIGH")     return Severity::High;
+    if (str == "MEDIUM")   return Severity::Medium;
+    return Severity::Low;
 }
 class AlertEvent {
 private:

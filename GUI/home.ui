@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>HomeForm</class>
+ <widget class="QWidget" name="HomeForm">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>946</width>
+    <height>738</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QWidget#HomeForm {
+    background-color: #0f172a;
+    color: #e2e8f0;
+    font-family: &quot;Inter&quot;, &quot;Segoe UI&quot;, sans-serif;
+}
+
+QLabel#labelBienvenue {
+    color: #f8fafc;
+    font-size: 24px;
+    font-weight: 700;
+    padding-bottom: 2px;
+}
+
+QLabel#labelsoustitre {
+    color: #94a3b8;
+    font-size: 14px;
+    padding-bottom: 12px;
+}
+
+QTextBrowser#howThisWorks {
+    background-color: #162032;
+    color: #cbd5e1;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    padding: 14px;
+    font-size: 13px;
+    line-height: 1.5;
+}</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QLabel" name="labelBienvenue">
+     <property name="styleSheet">
+      <string notr="true">  color: #2C3E50;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 24px;
+    font-weight: bold;</string>
+     </property>
+     <property name="text">
+      <string>Welcome to Net-Sentry</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="labelsoustitre">
+     <property name="text">
+      <string>Hybrid C++ &amp; Machine Learning Network Intrusion Detection System</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QTextBrowser" name="howThisWorks">
+     <property name="html">
+      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+hr { height: 1px; border-width: 0; }
+li.unchecked::marker { content: &quot;\2610&quot;; }
+li.checked::marker { content: &quot;\2612&quot;; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Adwaita Sans'; font-size:13px; font-weight:400; font-style:normal;&quot;&gt;
+&lt;h3 style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:large; font-weight:700; color:#38bdf8;&quot;&gt;How Net-Sentry Works&lt;/span&gt;&lt;/h3&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Net-Sentry analyzes network traffic in real time or from offline packet captures to detect known cyberattacks and zero-day anomalies with low latency. &lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:700; color:#f8fafc;&quot;&gt;1. Packet Capture (Live &amp;amp; PCAP)&lt;/span&gt;&lt;br /&gt;Captures raw packets directly from a selected network interface or replays recorded &lt;span style=&quot; font-family:'monospace';&quot;&gt;.pcap&lt;/span&gt; files for forensic analysis. &lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:700; color:#f8fafc;&quot;&gt;2. Bidirectional Flow Extraction&lt;/span&gt;&lt;br /&gt;Groups packets into bidirectional network flows and computes statistical telemetry features (packet rates, inter-arrival times, payload sizes, and TCP flags). &lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:700; color:#f8fafc;&quot;&gt;3. Hybrid ONNX Inference Engine&lt;/span&gt;&lt;br /&gt;Evaluates every completed flow using two complementary ML stages:&lt;br /&gt;• &lt;span style=&quot; font-weight:700;&quot;&gt;Supervised Classifier (LightGBM):&lt;/span&gt; Identifies known attack signatures (DDoS, DoS, Brute Force, Port Scan, Web Attacks, Botnets).&lt;br /&gt;• &lt;span style=&quot; font-weight:700;&quot;&gt;Unsupervised Detector (Anomaly Scoring):&lt;/span&gt; Flags unknown deviations and potential zero-day behavior. &lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:700; color:#f8fafc;&quot;&gt;4. Alerting &amp;amp; Local Persistence&lt;/span&gt;&lt;br /&gt;Assigns a severity level to every threat, displays it immediately in the live feed, and logs it into a local database for historical review.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

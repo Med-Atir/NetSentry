@@ -9,10 +9,12 @@
 #include <vector>
 #include <utility>
 #include <cstdint>
+#include <mutex>
 #include <tuple>
 
 class FlowManager {
 private:
+    mutable std::mutex mutex_;
     std::unordered_map<FlowKey, FlowStats> active_flows_;
     uint64_t idle_timeout_us_ = 60'000'000;
     uint64_t active_timeout_us_ = 120'000'000;

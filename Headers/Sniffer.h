@@ -30,18 +30,19 @@ private:
     void handle_raw_packet(pcpp::RawPacket* raw);
     void pcap_reader_loop();
 public:
+    void set_flow_manager(FlowManager* fm);
     using PacketCallback = std::function<void(const PacketMetaData&)>;
     std::string name;
     std::string description;
     std::string ipv4;
     ~PacketSniffer() {
         PacketSniffer::stop();
-        delete live_device_;
     }
     PacketSniffer() {
         running_ = false;
         live_device_ = nullptr;
         file_reader_ = nullptr;
+        flow_manager_ = nullptr;
         packets_captured_ = 0;
         packets_parsed_ = 0;
         packets_ignored_ = 0;

@@ -1,13 +1,15 @@
 //
 // Created by mohammed on 14/11/2026.
 //
-#include "Engine.h"
+#include "../Headers/Engine.h"
 
 Engine::Engine(const std::string& lgbm_model_path,const std::string& lgbm_meta_path,const std::string& iforest_model_path,const std::string& iforest_meta_path)
       : env_(ORT_LOGGING_LEVEL_WARNING, "NetSentry"),
       memory_info_(Ort::MemoryInfo::CreateCpu(OrtArenaAllocator, OrtMemTypeDefault)){
      load_lgbm_metadata(lgbm_meta_path);
      load_unsup_metadata(iforest_meta_path);
+    lgbm_session_ = std::make_unique<Ort::Session>(env_, lgbm_model_path.c_str(), session_options_);
+    iforest_session_ = std::make_unique<Ort::Session>(env_, iforest_model_path.c_str(), session_options_);
 }
 
 void Engine::load_lgbm_metadata(const std::string &json_path) {

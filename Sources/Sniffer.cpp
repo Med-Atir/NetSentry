@@ -2,7 +2,7 @@
 // Created by mohammed on 31/10/2026.
 //
 
-#include "Sniffer.h"
+#include "../Headers/Sniffer.h"
 
 std::vector<InterfaceInfo> PacketSniffer::liste_interfaces() {
     std::vector<InterfaceInfo> vect;
@@ -127,6 +127,7 @@ void PacketSniffer::handle_raw_packet(pcpp::RawPacket* raw) {
     pack.set_timestamp_us(timestamp_us);
     pack.set_src_ip(ipv4->getSrcIPAddress().getIPv4().toInt());
     pack.set_dst_ip(ipv4->getDstIPAddress().getIPv4().toInt());
+    pack.set_packet_len(static_cast<uint16_t>(ipv4->getDataLen()));
 
     if (tcp) {
         const pcpp::tcphdr* tcp_hdr = tcp->getTcpHeader();
@@ -166,4 +167,24 @@ void PacketSniffer::on_packet_arrived(pcpp::RawPacket *raw, pcpp::PcapLiveDevice
     auto* self = static_cast<PacketSniffer*>(cookie);
     if (self && self->running_.load() && raw)
         self->handle_raw_packet(raw);
+}
+
+void PacketSniffer::set_flow_manager(FlowManager *fm) {
+    flow_manager_ = fm;
+}
+
+bool PacketSniffer::is_running() const noexcept {
+    return running_;
+}
+
+uint64_t PacketSniffer::packets_captured() const noexcept {
+    return packets_captured_;
+}
+
+uint64_t PacketSniffer::packets_ignored() const noexcept {
+    return packets_ignored_;
+}
+
+uint64_t PacketSniffer::packets_parsed() const noexcept {
+    return packets_parsed_;
 }

@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>LiveForm</class>
+ <widget class="QWidget" name="LiveForm">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>929</width>
+    <height>551</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QWidget#LiveForm {
+    background-color: #0f172a;
+    color: #e2e8f0;
+    font-family: &quot;Inter&quot;, &quot;Segoe UI&quot;, sans-serif;
+    font-size: 13px;
+}
+
+/* === Liste des interfaces === */
+QComboBox#interface_2 {
+    background-color: #1e293b;
+    color: #f1f5f9;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    padding: 6px 12px;
+    min-height: 22px;
+}
+
+QComboBox#interface_2:focus {
+    border: 1px solid #38bdf8;
+}
+
+QComboBox#interface_2::drop-down {
+    border: none;
+    width: 24px;
+}
+
+QComboBox#interface_2 QAbstractItemView {
+    background-color: #1e293b;
+    color: #f1f5f9;
+    selection-background-color: #0284c7;
+    border: 1px solid #334155;
+}
+
+/* === Boutons Start / Stop === */
+QPushButton#startcap {
+    background-color: #0284c7;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    padding: 7px 18px;
+    font-weight: 600;
+}
+
+QPushButton#startcap:hover {
+    background-color: #0369a1;
+}
+
+QPushButton#stopcap {
+    background-color: rgba(239, 68, 68, 0.18);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.45);
+    border-radius: 6px;
+    padding: 7px 18px;
+    font-weight: 600;
+}
+
+QPushButton#stopcap:hover {
+    background-color: #dc2626;
+    color: #ffffff;
+}
+
+QPushButton:disabled {
+    background-color: #1e293b;
+    color: #64748b;
+    border: 1px solid #334155;
+}
+
+/* === Compteurs === */
+QLabel#label_1, QLabel#label_2, QLabel#label_4 {
+    color: #94a3b8;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+QLabel#packets, QLabel#flows, QLabel#alerts {
+    color: #38bdf8;
+    font-size: 16px;
+    font-weight: 700;
+    padding-left: 4px;
+}
+
+/* === Tableau des alertes === */
+QTableWidget#tableAlerts {
+    background-color: #111827;
+    alternate-background-color: #162032;
+    color: #e2e8f0;
+    gridline-color: #1e293b;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    selection-background-color: rgba(56, 189, 248, 0.22);
+    selection-color: #ffffff;
+}
+
+QTableWidget#tableAlerts::item {
+    padding: 6px 8px;
+    border-bottom: 1px solid #1e293b;
+}
+
+QHeaderView::section {
+    background-color: #1e293b;
+    color: #94a3b8;
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    padding: 8px;
+    border: none;
+    border-right: 1px solid #334155;
+    border-bottom: 1px solid #334155;
+}</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QComboBox" name="interface_2"/>
+     </item>
+     <item>
+      <widget class="QPushButton" name="stopcap">
+       <property name="text">
+        <string>Stop Capture</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="startcap">
+       <property name="text">
+        <string>Start Capture</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QLabel" name="label_1">
+       <property name="text">
+        <string>Packets:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="packets">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>Active Flows:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="flows">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Session Alerts:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="alerts">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QTableWidget" name="tableAlerts">
+     <column>
+      <property name="text">
+       <string>Time</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Src IP</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Dst IP</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Src Port</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Dst Port</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Protocol</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Attack Type</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Score</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Severity</string>
+      </property>
+     </column>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

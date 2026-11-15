@@ -2,7 +2,7 @@
 // Created by mohammed on 13/11/2026.
 //
 
-#include "FlowManager.h"
+#include "../Headers/FlowManager.h"
 
 FlowKey FlowManager::make_flow_key(const PacketMetaData &pkt) {
     FlowKey key;
@@ -26,15 +26,18 @@ FlowKey FlowManager::make_flow_key(const PacketMetaData &pkt) {
 }
 
 size_t FlowManager::active_flow_count() const {
+    std::lock_guard<std::mutex> lock(mutex_);
     return this->active_flows_.size();
 }
 
 void FlowManager::process_packet(const PacketMetaData &pkt) {
+    std::lock_guard<std::mutex> lock(mutex_);
     FlowKey key = make_flow_key(pkt);
     active_flows_[key].update(pkt);
 }
 
 std::vector<std::pair<FlowKey, FlowStats> > FlowManager::evict_flows(uint64_t current_time_us) {
+    std::lock_guard<std::mutex> lock(mutex_);
     std::vector<std::pair<FlowKey, FlowStats>> evicted;
     auto it = active_flows_.begin();
     while(it != active_flows_.end()) {
@@ -51,6 +54,7 @@ std::vector<std::pair<FlowKey, FlowStats> > FlowManager::evict_flows(uint64_t cu
 }
 
 std::vector<std::pair<FlowKey, FlowStats> > FlowManager::flush_all() {
+    std::lock_guard<std::mutex> lock(mutex_);
     std::vector<std::pair<FlowKey, FlowStats>> remaining;
     remaining.reserve(active_flows_.size());
     for (auto it = active_flows_.begin();it != active_flows_.end();++it) {
