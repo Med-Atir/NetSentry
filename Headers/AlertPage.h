@@ -7,6 +7,7 @@
 
 #include <QWidget>
 #include <vector>
+#include "Headers/Controller.h"
 #include "Headers/Types.h"
 
 namespace Ui {
@@ -19,17 +20,21 @@ class AlertsPage : public QWidget {
 public:
     explicit AlertsPage(QWidget *parent = nullptr);
     ~AlertsPage() override;
+    void setController(Controller* controller);
 
-    void loadAlerts(const std::vector<AlertEvent> &alerts);
+
+    void loadAlerts();
 
     signals:
         void clearAlertsRequested();
 
 private slots:
     void onClearClicked();
+    void onrefreshClicked();
 
 private:
     Ui::AlertForm *ui;
+    Controller *controller = nullptr;
 };
 
 #endif // ALERTSPAGE_H

@@ -20,8 +20,8 @@ public:
     ~DB();
     bool connect(const QString& dbName);
     void disconnect();
-    static std::vector<AlertEvent> getAlerts(int limit = 500);
-    static bool addAlert(const AlertEvent&);
-    static bool clearAlerts();
+    std::vector<AlertEvent> getAlerts(int limit = 500);
+   bool addAlert(const AlertEvent&);
+    bool clearAlerts();
 };
 #endif //NETSENTRY_DB_H

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>918</width>
-    <height>594</height>
+    <height>700</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -67,6 +67,23 @@ QPushButton#clear:hover {
 
 QPushButton#clear:pressed {
     background-color: #b91c1c;
+}
+QPushButton#refresh {
+    background-color: rgba(14, 165, 233, 0.18);
+    color: #38bdf8;
+    border: 1px solid rgba(14, 165, 233, 0.45);
+    border-radius: 6px;
+    padding: 8px 20px;
+    font-weight: 600;
+}
+
+QPushButton#refresh:hover {
+    background-color: #0284c7;
+    color: #ffffff;
+}
+
+QPushButton#refresh:pressed {
+    background-color: #0369a1;
 }</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -117,6 +134,13 @@ QPushButton#clear:pressed {
        <string>Severity</string>
       </property>
      </column>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="refresh">
+     <property name="text">
+      <string>Refresh Alerts</string>
+     </property>
     </widget>
    </item>
    <item>

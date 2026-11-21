@@ -43,6 +43,8 @@ add_executable(NetSentry
         Headers/MainWindow.h
         Sources/MainWindow.cpp
         main.cpp
+        Headers/Controller.h
+        Sources/Controller.cpp
 )
 
 target_link_libraries(NetSentry PRIVATE

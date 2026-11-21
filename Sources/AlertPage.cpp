@@ -22,9 +22,9 @@ AlertsPage::~AlertsPage() {
     delete ui;
 }
 
-void AlertsPage::loadAlerts(const std::vector<AlertEvent> &alerts) {
+void AlertsPage::loadAlerts() {
     ui->tableAlerts->setRowCount(0);
-
+    std::vector<AlertEvent> alerts = this->controller->getAlerts();
     for (const auto &alert : alerts) {
         const int row = ui->tableAlerts->rowCount();
         ui->tableAlerts->insertRow(row);
@@ -46,6 +46,17 @@ void AlertsPage::loadAlerts(const std::vector<AlertEvent> &alerts) {
 }
 
 void AlertsPage::onClearClicked() {
-    ui->tableAlerts->setRowCount(0);
-    emit clearAlertsRequested();
+    if (!controller) return;
+    if (controller->clearAlertsDB()) {
+        ui->tableAlerts->setRowCount(0);
+    }
+}
+void AlertsPage::setController(Controller* ctrl) {
+    if (!ctrl) return;
+    this->controller = ctrl;
+    loadAlerts();
+}
+void AlertsPage::onrefreshClicked() {
+    if (!controller) return;
+    loadAlerts();
 }

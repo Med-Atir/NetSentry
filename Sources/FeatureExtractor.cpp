@@ -47,7 +47,7 @@ FeatureVector FeatureExtractor::extract(
     const FlowStats& stats,
     bool apply_scaling) const {
 
-    std::vector<float> f;
+    std::vector<float> f(NUM_FEATURES, 0.0f);
 
     const uint64_t dur_us       = stats.duration_us();
     const double   dur_sec      = static_cast<double>(dur_us) / 1e6;

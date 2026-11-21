@@ -22,7 +22,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->pageAlerts, &AlertsPage::clearAlertsRequested, this, &MainWindow::handleClearDatabase);
 
     ui->home_2->setChecked(true);
-    ui->contenu->setCurrentIndex(0);
+    ui->contenu->setCurrentWidget(ui->pageHome);
 }
 
 MainWindow::~MainWindow() {
@@ -30,19 +30,24 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::showHomePage() {
-    ui->contenu->setCurrentIndex(0);
+    ui->contenu->setCurrentWidget(ui->pageHome);
 }
 
 void MainWindow::showLiveCapturePage() {
-    ui->contenu->setCurrentIndex(1);
+    ui->contenu->setCurrentWidget(ui->pageLive);
+}
+void MainWindow::setController(Controller *ctrl) {
+    ui->pageLive->setController(ctrl);
+    ui->pageFile->setController(ctrl);
+    ui->pageAlerts->setController(ctrl);
 }
 
 void MainWindow::showFileCapturePage() {
-    ui->contenu->setCurrentIndex(2);
+    ui->contenu->setCurrentWidget(ui->pageFile);
 }
 
 void MainWindow::showAlertsPage() {
-    ui->contenu->setCurrentIndex(3);
+    ui->contenu->setCurrentWidget(ui->pageAlerts);
     database.getAlerts(200);
 }
 

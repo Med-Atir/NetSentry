@@ -9,6 +9,7 @@
 #include <QStringList>
 #include <cstdint>
 #include "Headers/Types.h"
+#include "Headers/Controller.h"
 
 namespace Ui {
     class LiveForm;
@@ -21,10 +22,11 @@ public:
     explicit LiveCapturePage(QWidget *parent = nullptr);
     ~LiveCapturePage() override;
 
-    void setInterfaces(const QStringList &interfaces);
+    void setInterfaces();
     void updateCounters(uint64_t packets, uint64_t activeFlows, uint64_t sessionAlerts);
     void appendAlert(const AlertEvent &alert);
     void setCapturingState(bool running);
+    void setController(Controller* controller);
 
     signals:
         void startRequested(const QString &interfaceName);
@@ -36,6 +38,7 @@ private slots:
 
 private:
     Ui::LiveForm *ui;
+    Controller *controller = nullptr;
 };
 
 #endif // LIVECAPTUREPAGE_H

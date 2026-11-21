@@ -19,6 +19,7 @@ class PacketSniffer {
 private:
     FlowManager* flow_manager_;
     std::function<void(const PacketMetaData&)> callback_;
+    std::function<void()> finished_callback_;
     pcpp::PcapLiveDevice* live_device_;
     std::unique_ptr<pcpp::IFileReaderDevice> file_reader_;
     std::atomic<bool> running_;
@@ -32,6 +33,8 @@ private:
 public:
     void set_flow_manager(FlowManager* fm);
     using PacketCallback = std::function<void(const PacketMetaData&)>;
+    using FinishedCallback = std::function<void()>;
+    void set_finished_callback(FinishedCallback cb) { finished_callback_ = std::move(cb); }
     std::string name;
     std::string description;
     std::string ipv4;
@@ -47,10 +50,10 @@ public:
         packets_parsed_ = 0;
         packets_ignored_ = 0;
     }
-    static std::vector<InterfaceInfo> liste_interfaces();
+    std::vector<InterfaceInfo> liste_interfaces();
     void set_packet_callback(PacketCallback cb){callback_ = cb;}
     bool start_live(const std::string& iface, const std::string& bpf = "");
-    bool start_pcap(const std::string& path, const std::string& bpf);
+    bool start_pcap(const std::string& path, const std::string& bpf = "");
     void stop();
     bool is_running() const noexcept;
     uint64_t packets_captured() const noexcept;

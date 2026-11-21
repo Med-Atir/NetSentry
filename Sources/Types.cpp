@@ -148,3 +148,29 @@ double FlowStats::active_mean() const {
 double FlowStats::idle_mean() const {
     return (idle_count > 0) ? (sum_idle_us / idle_count) : 0.0;
 }
+
+AlertEvent::AlertEvent() {
+    src_port = 0;
+    dst_port = 0;
+    protocol = 0;
+    confidence = 0.0f;
+    severity = Severity::Low;
+    time_stamp_us = 0;
+    anomaly_score = 0.0f;
+}
+
+AlertEvent::AlertEvent(const AlertEvent &alert) {
+    src_ip = alert.src_ip;
+    dst_ip = alert.dst_ip;
+    src_port  = alert.src_port;
+    dst_port = alert.dst_port;
+    protocol = alert.protocol;
+    attack_type = alert.attack_type;
+    confidence = alert.confidence;
+    action_taken = alert.action_taken;
+    severity = alert.severity;
+    time_stamp_us = alert.time_stamp_us;
+    anomaly_score = alert.anomaly_score;
+}
+
+AlertEvent::~AlertEvent() = default;

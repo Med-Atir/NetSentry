@@ -4,12 +4,16 @@
 
 
 #include "Headers/LiveCapturePage.h"
-#include "Headers/LiveCapturePage.h"
+#include "Headers/Engine.h"
 #include "GUI/ui_live_capture.h"
 #include "Headers/Types.h"
 #include <QDateTime>
 #include <QHeaderView>
 #include <QTableWidgetItem>
+#include "Headers/Controller.h"
+#include "Headers/Sniffer.h"
+#include <QString>
+
 
 LiveCapturePage::LiveCapturePage(QWidget *parent)
     : QWidget(parent), ui(new Ui::LiveForm) {
@@ -26,9 +30,14 @@ LiveCapturePage::~LiveCapturePage() {
     delete ui;
 }
 
-void LiveCapturePage::setInterfaces(const QStringList &interfaces) {
+void LiveCapturePage::setInterfaces() {
+    if (!controller) return;
+    QStringList vect;
+    for (const auto& i : controller->getInterfaces()) {
+        vect.append(QString::fromStdString(i));
+    }
     ui->interface_2->clear();
-    ui->interface_2->addItems(interfaces);
+    ui->interface_2->addItems(vect);
 }
 
 void LiveCapturePage::updateCounters(uint64_t packets, uint64_t activeFlows, uint64_t sessionAlerts) {
@@ -45,18 +54,21 @@ void LiveCapturePage::setCapturingState(bool running) {
 
 void LiveCapturePage::onStartClicked() {
     const QString iface = ui->interface_2->currentText();
-    if (iface.isEmpty()) {
+    if (!controller || iface.isEmpty()) {
         return;
     }
     ui->tableAlerts->setRowCount(0);
     updateCounters(0, 0, 0);
     setCapturingState(true);
-    emit startRequested(iface);
+    if (!controller->start_live(iface.toStdString())) {
+        setCapturingState(false);
+    }
 }
 
 void LiveCapturePage::onStopClicked() {
+    if (!controller) return;
     setCapturingState(false);
-    emit stopRequested();
+    controller->stop();
 }
 
 void LiveCapturePage::appendAlert(const AlertEvent &alert) {
@@ -66,6 +78,10 @@ void LiveCapturePage::appendAlert(const AlertEvent &alert) {
     const QString timeStr = QDateTime::fromMSecsSinceEpoch(
         static_cast<qint64>(alert.get_timestamp_us() / 1000))
         .toString("yyyy-MM-dd HH:mm:ss");
+    const float displayScore = (alert.get_confidence() > 0.0f)
+    ? alert.get_confidence()
+    : alert.get_anomaly_score();
+    ui->tableAlerts->setItem(row, 7, new QTableWidgetItem(QString::number(displayScore, 'f', 2)));
 
     ui->tableAlerts->setItem(row, 0, new QTableWidgetItem(timeStr));
     ui->tableAlerts->setItem(row, 1, new QTableWidgetItem(QString::fromStdString(alert.get_src_ip())));
@@ -74,8 +90,19 @@ void LiveCapturePage::appendAlert(const AlertEvent &alert) {
     ui->tableAlerts->setItem(row, 4, new QTableWidgetItem(QString::number(alert.get_dst_port())));
     ui->tableAlerts->setItem(row, 5, new QTableWidgetItem(QString::number(alert.get_protocol())));
     ui->tableAlerts->setItem(row, 6, new QTableWidgetItem(QString::fromStdString(alert.get_attack_type())));
-    ui->tableAlerts->setItem(row, 7, new QTableWidgetItem(QString::number(alert.get_confidence(), 'f', 2)));
     ui->tableAlerts->setItem(row, 8, new QTableWidgetItem(QString::fromStdString(severity_to_string(alert.get_severity()))));
-
     ui->tableAlerts->scrollToBottom();
+}
+void LiveCapturePage::setController(Controller* ctrl) {
+    if (!ctrl) return;
+    controller = ctrl;
+
+    setInterfaces();
+    connect(controller, &Controller::alertDetected,
+            this, &LiveCapturePage::appendAlert,
+            static_cast<Qt::ConnectionType>(Qt::QueuedConnection | Qt::UniqueConnection));
+
+    connect(controller, &Controller::statsUpdated,
+            this, &LiveCapturePage::updateCounters,
+            static_cast<Qt::ConnectionType>(Qt::QueuedConnection | Qt::UniqueConnection));
 }

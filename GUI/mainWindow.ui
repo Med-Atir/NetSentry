@@ -153,103 +153,93 @@ QStatusBar {
 }</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QStackedWidget" name="contenu">
-    <property name="geometry">
-     <rect>
-      <x>200</x>
-      <y>30</y>
-      <width>639</width>
-      <height>561</height>
-     </rect>
-    </property>
-    <property name="currentIndex">
-     <number>1</number>
-    </property>
-    <widget class="FileCapturePage" name="pageFile"/>
-    <widget class="AlertsPage" name="pageAlerts"/>
-    <widget class="HomePage" name="pageHome"/>
-    <widget class="LiveCapturePage" name="pageLive"/>
-   </widget>
-   <widget class="QWidget" name="sidebar" native="true">
-    <property name="geometry">
-     <rect>
-      <x>39</x>
-      <y>30</y>
-      <width>161</width>
-      <height>561</height>
-     </rect>
-    </property>
-    <property name="minimumSize">
-     <size>
-      <width>0</width>
-      <height>561</height>
-     </size>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>161</width>
-      <height>561</height>
-     </size>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayout_2">
-     <property name="spacing">
-      <number>0</number>
-     </property>
-     <property name="leftMargin">
-      <number>0</number>
-     </property>
-     <property name="topMargin">
-      <number>0</number>
-     </property>
-     <property name="rightMargin">
-      <number>0</number>
-     </property>
-     <property name="bottomMargin">
-      <number>0</number>
-     </property>
-     <item>
-      <widget class="QLabel" name="bar">
-       <property name="maximumSize">
-        <size>
-         <width>200</width>
-         <height>16777215</height>
-        </size>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QWidget" name="sidebar" native="true">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>561</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>161</width>
+        <height>561</height>
+       </size>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <property name="spacing">
+        <number>0</number>
        </property>
-       <property name="text">
-        <string>Net-Sentry</string>
+       <property name="leftMargin">
+        <number>0</number>
        </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="home_2">
-       <property name="text">
-        <string>Home</string>
+       <property name="topMargin">
+        <number>0</number>
        </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="live_capture">
-       <property name="text">
-        <string>Live capture</string>
+       <property name="rightMargin">
+        <number>0</number>
        </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="file_capture">
-       <property name="text">
-        <string>Capture from file</string>
+       <property name="bottomMargin">
+        <number>0</number>
        </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="alerts">
-       <property name="text">
-        <string>Recent Alerts</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
+       <item>
+        <widget class="QLabel" name="bar">
+         <property name="maximumSize">
+          <size>
+           <width>200</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Net-Sentry</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="home_2">
+         <property name="text">
+          <string>Home</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="live_capture">
+         <property name="text">
+          <string>Live capture</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="file_capture">
+         <property name="text">
+          <string>Capture from file</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="alerts">
+         <property name="text">
+          <string>Recent Alerts</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QStackedWidget" name="contenu">
+      <property name="currentIndex">
+       <number>1</number>
+      </property>
+      <widget class="FileCapturePage" name="pageFile"/>
+      <widget class="AlertsPage" name="pageAlerts"/>
+      <widget class="HomePage" name="pageHome"/>
+      <widget class="LiveCapturePage" name="pageLive"/>
+     </widget>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

@@ -6,7 +6,11 @@
 #include "Headers/DB.h"
 
 DB::DB() {
-    db = QSqlDatabase::addDatabase("QSQLITE");
+    if (QSqlDatabase::contains(QSqlDatabase::defaultConnection)) {
+        db = QSqlDatabase::database(QSqlDatabase::defaultConnection);
+    } else {
+        db = QSqlDatabase::addDatabase("QSQLITE");
+    }
 }
 
 DB::~DB() {

@@ -4,10 +4,12 @@
 
 #ifndef NETSENTRY_TYPES_H
 #define NETSENTRY_TYPES_H
+#include <QMetaType>
 #include <functional>
 #include <cstdint>
 #include <cmath>
 #include <algorithm>
+#include <QMetaType>
 #include <array>
 #include <string>
 constexpr size_t NUM_FEATURES = 30;
@@ -306,16 +308,19 @@ class AlertEvent {
 private:
         std::string src_ip;
         std::string dst_ip;
-        uint16_t src_port = 0;
-        uint16_t dst_port = 0;
-        uint8_t protocol = 0;
+        uint16_t src_port;
+        uint16_t dst_port;
+        uint8_t protocol;
         std::string attack_type;
-        float confidence = 0.0f;
+        float confidence;
         std::string action_taken;
-        Severity severity = Severity::Low;
-        uint64_t time_stamp_us = 0;
-        float anomaly_score = 0.0f;
+        Severity severity;
+        uint64_t time_stamp_us;
+        float anomaly_score;
 public:
+        AlertEvent();
+        AlertEvent(const AlertEvent&);
+        ~AlertEvent();
         std::string get_src_ip()const{return src_ip;}
         std::string get_dst_ip()const{return dst_ip;}
         uint16_t get_src_port()const{return src_port;}
@@ -341,4 +346,6 @@ public:
         void set_severity(const Severity& s){severity = s;}
 
 };
+Q_DECLARE_METATYPE(AlertEvent)
+
 #endif //NETSENTRY_TYPES_H

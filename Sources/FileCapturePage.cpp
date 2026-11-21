@@ -1,7 +1,3 @@
-//
-// Created by mohammed on 15/11/2026.
-//
-#include "Headers/FileCapturePage.h"
 #include "Headers/FileCapturePage.h"
 #include "GUI/ui_file_capture.h"
 
@@ -41,18 +37,27 @@ void FileCapturePage::onBrowseClicked() {
 }
 
 void FileCapturePage::onStartClicked() {
-    if (selectedFilePath.isEmpty()) {
+    if (!controller || selectedFilePath.isEmpty()) {
         return;
     }
     ui->tableAlerts->setRowCount(0);
     updateCounters(0, 0, 0);
     setCapturingState(true);
-    emit startFileRequested(selectedFilePath);
+    if (!controller->start_file(selectedFilePath.toStdString())) {
+        setCapturingState(false);
+    }
 }
 
 void FileCapturePage::onStopClicked() {
+    if (!controller) {
+        return;
+    }
     setCapturingState(false);
-    emit stopFileRequested();
+    controller->stop();
+}
+
+void FileCapturePage::onCaptureFinished() {
+    setCapturingState(false);
 }
 
 void FileCapturePage::setCapturingState(bool running) {
@@ -74,6 +79,10 @@ void FileCapturePage::appendAlert(const AlertEvent &alert) {
     const QString timeStr = QDateTime::fromMSecsSinceEpoch(
         static_cast<qint64>(alert.get_timestamp_us() / 1000))
         .toString("yyyy-MM-dd HH:mm:ss");
+    const float displayScore = (alert.get_confidence() > 0.0f)
+    ? alert.get_confidence()
+    : alert.get_anomaly_score();
+    ui->tableAlerts->setItem(row, 7, new QTableWidgetItem(QString::number(displayScore, 'f', 2)));
 
     ui->tableAlerts->setItem(row, 0, new QTableWidgetItem(timeStr));
     ui->tableAlerts->setItem(row, 1, new QTableWidgetItem(QString::fromStdString(alert.get_src_ip())));
@@ -82,8 +91,24 @@ void FileCapturePage::appendAlert(const AlertEvent &alert) {
     ui->tableAlerts->setItem(row, 4, new QTableWidgetItem(QString::number(alert.get_dst_port())));
     ui->tableAlerts->setItem(row, 5, new QTableWidgetItem(QString::number(alert.get_protocol())));
     ui->tableAlerts->setItem(row, 6, new QTableWidgetItem(QString::fromStdString(alert.get_attack_type())));
-    ui->tableAlerts->setItem(row, 7, new QTableWidgetItem(QString::number(alert.get_confidence(), 'f', 2)));
     ui->tableAlerts->setItem(row, 8, new QTableWidgetItem(QString::fromStdString(severity_to_string(alert.get_severity()))));
 
     ui->tableAlerts->scrollToBottom();
+}
+
+void FileCapturePage::setController(Controller* ctrl) {
+    if (!ctrl) return;
+    controller = ctrl;
+
+    connect(controller, &Controller::alertDetected,
+            this, &FileCapturePage::appendAlert,
+            static_cast<Qt::ConnectionType>(Qt::QueuedConnection | Qt::UniqueConnection));
+
+    connect(controller, &Controller::captureFinished,
+            this, &FileCapturePage::onCaptureFinished,
+            static_cast<Qt::ConnectionType>(Qt::QueuedConnection | Qt::UniqueConnection));
+
+    connect(controller, &Controller::statsUpdated,
+        this, &FileCapturePage::updateCounters,
+        static_cast<Qt::ConnectionType>(Qt::QueuedConnection | Qt::UniqueConnection));
 }

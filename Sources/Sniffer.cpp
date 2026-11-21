@@ -84,8 +84,11 @@ void PacketSniffer::pcap_reader_loop() {
     while (running_.load() && file_reader_->getNextPacket(raw_packet)) {
         handle_raw_packet(&raw_packet);
     }
-    running_ = false;
+    bool natural_eof = running_.exchange(false);
     file_reader_->close();
+    if (natural_eof && finished_callback_) {
+        finished_callback_();
+    }
 }
 
 void PacketSniffer::stop() {
@@ -160,6 +163,13 @@ void PacketSniffer::handle_raw_packet(pcpp::RawPacket* raw) {
     packets_parsed_++;
     if (flow_manager_) {
         flow_manager_->process_packet(pack);
+    }
+    packets_parsed_++;
+    if (flow_manager_) {
+        flow_manager_->process_packet(pack);
+    }
+    if (callback_) {
+        callback_(pack);
     }
 }
 void PacketSniffer::on_packet_arrived(pcpp::RawPacket *raw, pcpp::PcapLiveDevice *dev, void *cookie) {

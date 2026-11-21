@@ -36,7 +36,7 @@ private:
     std::vector<float> run_lightgbm(const std::vector<float>& features);
     float run_isolation_forest(const std::vector<float>& log_features);
 public:
-    Engine(const std::string &lgbm_model_path = "ids_lightgbm.onnx" , const std::string &lgbm_meta_path = "./ids_metadata.json", const std::string &iforest_model_path = "isolation_forest.onnx" , const std::string &iforest_meta_path = "./unsup_metadata.json");
+    Engine(const std::string &lgbm_model_path, const std::string &lgbm_meta_path, const std::string &iforest_model_path, const std::string &iforest_meta_path);
     PredictionResult predict(const std::vector<float>& features);
 };
 #endif //NETSENTRY_ENGINE_H
