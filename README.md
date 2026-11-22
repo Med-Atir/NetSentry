@@ -31,7 +31,13 @@
 
 ## 🧠 How it works
 
-NetSentry uses a **cascade**, not two parallel detectors. Stage 1 checks each flow against the known attack classes, each with its own calibrated confidence threshold. If no attack class passes its threshold, the flow goes to Stage 2, where an Isolation Forest scores it as a possible anomaly. Only flows that pass both stages are labelled Benign.
+NetSentry uses a **cascade**, not two parallel detectors, and every flow gets a three-way decision:
+
+1. **Known attack:** LightGBM is confident (each attack class has its own calibrated threshold) → alert with that class.
+2. **Confidently benign:** LightGBM's benign probability reaches the configurable `benign_gate` → the flow is labelled Benign and **Stage 2 is skipped**.
+3. **Uncertain:** everything in between goes to the Isolation Forest, which scores it as a possible anomaly.
+
+So the Isolation Forest only judges flows the classifier cannot settle, which is where it adds value (see [Results](#-results)) and which keeps normal traffic from triggering false alarms.
 
 ```
 ┌──────────────────────┐     ┌───────────────────────────────────────┐
@@ -51,7 +57,7 @@ NetSentry uses a **cascade**, not two parallel detectors. Stage 1 checks each fl
                              │ Benign / DoS / DDoS / BruteForce /    │
                              │ Web Attack / Botnet_Infiltration      │
                              └──────────────────┬────────────────────┘
-                                                │ no attack class above its threshold
+                                                │ uncertain flows only (see decision order)
                                                 ▼
                              ┌───────────────────────────────────────┐
                              │ Stage 2: Isolation Forest (ONNX)      │
@@ -67,10 +73,16 @@ NetSentry uses a **cascade**, not two parallel detectors. Stage 1 checks each fl
                   └─────────────────────┘             └─────────────────────┘
 ```
 
+**Decision order for each flow** (`Engine::predict`):
+
+1. If any attack class has probability ≥ its own threshold → report that attack (stage: `LGBM`).
+2. Else if P(Benign) ≥ `benign_gate` → Benign, Stage 2 skipped (stage: `LGBM`).
+3. Else run the Isolation Forest: score < threshold → `ZERO-Day` (anomaly) alert, otherwise Benign.
+
 | Stage | Model | Input | Decision rule |
 |---|---|---|---|
-| 1 | LightGBM (`ids_lightgbm.onnx`) | Raw 30-feature vector | An attack class is reported if its probability reaches its own threshold |
-| 2 | Isolation Forest (`isolation_forest.onnx`) | `log1p(max(x, 0))` of the features | Anomaly if score < `-0.1288` |
+| 1 | LightGBM (`ids_lightgbm.onnx`) | Raw 30-feature vector | Attack class reported if its probability reaches its own threshold; flow trusted as Benign if P(Benign) ≥ `benign_gate` |
+| 2 | Isolation Forest (`isolation_forest.onnx`) | `log1p(max(x, 0))` of the features | Anomaly if score < `threshold` (default `-0.1288`) |
 
 **Stage 1 per-class thresholds** (from `Models/ids_metadata.json`):
 
@@ -78,7 +90,14 @@ NetSentry uses a **cascade**, not two parallel detectors. Stage 1 checks each fl
 |---|---|---|---|---|
 | 0.90 | 0.85 | 0.85 | 0.85 | 0.90 |
 
-The thresholds are high on purpose: Stage 1 only names a known attack when it is very confident, and everything else is passed to Stage 2.
+The thresholds are high on purpose: Stage 1 only names a known attack when it is very confident.
+
+**Stage 2 and gate settings** (from `Models/unsup_metadata.json`, no recompilation needed):
+
+| Key | Meaning |
+|---|---|
+| `threshold` | Anomaly cutoff; a flow is anomalous if its Isolation Forest score is below it |
+| `benign_gate` | If LightGBM's P(Benign) is at or above this value, Stage 2 is skipped. A value above 1 (e.g. `1.01`) disables the gate and sends every unflagged flow to Stage 2 |
 
 > The label `ZERO-Day` in the UI means **anomalous flow**, not a confirmed zero-day exploit.
 
@@ -92,6 +111,7 @@ The thresholds are high on purpose: Stage 1 only names a known attack when it is
   - *Packet length (5):* Fwd and Bwd Packet Length Max/Mean, Packet Length Std
   - *Timing (6):* Flow IAT Mean/Std, Fwd IAT Total/Std, Active Mean, Idle Mean
   - *TCP and header (9):* FIN, SYN, RST, PSH, ACK flag counts, Fwd Header Length, Init Fwd/Bwd Win Bytes, Fwd Seg Size Min
+- **Three-way cascade decision.** Known attacks are named by LightGBM, confident-benign flows bypass the anomaly stage, and only uncertain flows are scored by the Isolation Forest. Thresholds and the gate are plain JSON values you can tune without rebuilding.
 - **Multi-threaded Qt 6 interface.** Capture and inference run off the UI thread and report back through queued signals. Views: Home, Live Capture, Capture from File, Recent Alerts.
 - **Persistent alert history.** Every alert is stored in SQLite with timestamp, 5-tuple, scores, attack type and severity.
 
@@ -115,6 +135,26 @@ Held-out test set (20% split) of 1,331,907 flows. **Accuracy: 98%, macro F1: 0.9
 
 Accuracy is inflated by the large Benign class, so macro F1 is the more honest number. Web Attack has only 176 test flows, so treat its score as indicative, not conclusive.
 
+### Stage 2: Isolation Forest (standalone)
+
+Trained on benign flows only and evaluated on the same held-out test set (all attacks vs. benign). **ROC-AUC: 0.86**, so the anomaly scores separate attacks from normal traffic well.
+
+Share of each class flagged at a fixed false-alarm rate on benign traffic (the Benign row is the false-alarm rate itself):
+
+| Class | FPR 1% | FPR 2% | FPR 5% | FPR 10% | FPR 15% | FPR 20% |
+|---|---|---|---|---|---|---|
+| Benign (false alarms) | 0.01 | 0.02 | 0.05 | 0.10 | 0.15 | 0.20 |
+| Botnet_Infiltration | 0.02 | 0.03 | 0.56 | 0.64 | 0.69 | 0.73 |
+| BruteForce | 0.00 | 0.00 | 0.20 | 1.00 | 1.00 | 1.00 |
+| DDoS | 0.00 | 0.00 | 0.00 | 0.59 | 0.59 | 0.71 |
+| DoS | 0.02 | 0.04 | 0.06 | 0.40 | 0.53 | 0.93 |
+| Web Attack | 0.23 | 0.32 | 0.36 | 0.48 | 0.55 | 0.65 |
+
+What this shows:
+- **It is strongest where LightGBM is weakest.** At 5% false alarms it flags 56% of botnet flows (Stage 1 recall: 0.55), and at 1% it already flags 23% of web attacks.
+- **It is not a stand-alone detector.** At strict thresholds it catches little, and loosening it enough to catch most attacks would flood live traffic. That is why it only sees flows Stage 1 cannot settle, and why the benign gate exists.
+- The shipped threshold (`-0.1288`) is a strict operating point (about 0.5% false alarms on CSE-CIC benign traffic) chosen to keep alert volume low.
+
 ### End-to-end stress test: MACCDC 2012
 
 | Metric | Result |
@@ -136,8 +176,10 @@ These are *flagged* flows, not verified attacks: the capture has no per-flow gro
 ## ⚠️ Known limitations
 
 - **Botnet_Infiltration recall is 0.55.** About 45% of botnet flows in the test set are missed by Stage 1.
-- **The anomaly stage produces false positives on normal HTTPS traffic** in live capture. Because Stage 2 scores every flow that Stage 1 does not flag, its false-positive rate directly drives the alert volume. The threshold in `unsup_metadata.json` still needs tuning.
-- **No cascade-level evaluation yet.** Stage 1 is evaluated above; the combined pipeline's recall and false-positive rate versus Stage 1 alone are planned.
+- **The anomaly stage can raise false alarms on normal HTTPS traffic** in live capture, because live traffic is scored differently from the CSE-CIC benign flows it was trained on. The `benign_gate` limits how many confident-benign flows reach Stage 2, and calibrating the threshold on locally captured benign traffic is planned; before/after numbers will be added.
+- **Stage 2 trades recall for false alarms.** See the table above: catching most attacks on its own would need a 5-10% false-alarm rate.
+- **No cascade-level evaluation yet.** Stage 1 and Stage 2 are evaluated separately above; the combined pipeline's recall and false-positive rate (with and without the gate) are planned.
+- **The UI can briefly show "not responding" when a very large capture starts**, then runs smoothly.
 - **Dataset shift.** Training on CSE-CIC-IDS2018 and testing on MACCDC 2012 traffic is a stress test, not a benchmark.
 - Throughput in packets per second has not been formally measured.
 
@@ -201,7 +243,7 @@ The models were trained offline and exported to ONNX. The full pipeline is in [`
 | Botnet_Infiltration | Bot, Infilteration |
 
 - **Stage 1:** LightGBM multi-class classifier on the 30 raw features, with per-class thresholds chosen after training.
-- **Stage 2:** Isolation Forest trained only on benign traffic, with features preprocessed as `log1p(max(x, 0))`. The same preprocessing is applied in the C++ engine.
+- **Stage 2:** Isolation Forest (250 trees, `max_samples=2048`, `random_state=49`) trained only on benign traffic after median imputation, with features preprocessed as `log1p(max(x, 0))`. The same preprocessing is applied in the C++ engine. The anomaly threshold is stored in `unsup_metadata.json`, so it can be changed without retraining.
 - **Dependencies:** see the imports at the top of the notebook (LightGBM, scikit-learn, ONNX conversion tools, kagglehub).
 
 ---
@@ -227,8 +269,9 @@ NetSentry/
 
 ## 🗺️ Roadmap
 
-- [ ] Evaluate the full cascade (recall and FP rate vs. Stage 1 alone)
-- [ ] Tune the anomaly threshold on validation data to cut false positives on normal HTTPS
+- [x] Benign gate: skip Stage 2 for flows LightGBM is confident are benign
+- [ ] Evaluate the full cascade (recall and FP rate vs. Stage 1 alone, with and without the gate) and choose the `benign_gate` value
+- [ ] Calibrate the anomaly threshold on locally captured benign traffic
 - [ ] Check whether the 1-second flow eviction matches the flow timeouts of the training data
 - [ ] Improve Botnet_Infiltration recall
 - [ ] Batched SQLite transactions for faster offline ingestion
