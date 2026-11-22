@@ -10,12 +10,11 @@
 #include "Headers/MainWindow.h"
 
 int main(int argc, char *argv[]) {
-    qputenv("QT_QPA_PLATFORMTHEME", "none");
+    qputenv("QT_QPA_PLATFORMTHEME", "generic");
     qputenv("QT_QPA_PLATFORM", "xcb");
 
     QApplication app(argc, argv);
     QApplication::setStyle("fusion");
-    app.setApplicationName("Net-Sentry");
     qRegisterMetaType<AlertEvent>("AlertEvent");
     std::string supPath = "/home/mohammed/Study/Projets/NetSentry/Models/ids_lightgbm.onnx";
     std::string unsupPath = "/home/mohammed/Study/Projets/NetSentry/Models/isolation_forest.onnx";

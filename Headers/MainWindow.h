@@ -6,7 +6,6 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "Headers/DB.h"
 #include "Headers/Controller.h"
 
 namespace Ui {
@@ -29,7 +28,6 @@ private slots:
     void handleClearDatabase();
 private:
     Ui::MainWindow *ui;
-    DB database;
 };
 
 #endif // MAINWINDOW_H

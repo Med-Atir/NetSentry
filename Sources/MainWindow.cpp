@@ -10,9 +10,6 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
-
-    database.connect("netsentry.db");
-
     // Sidebar navigation
     connect(ui->home_2, &QPushButton::clicked, this, &MainWindow::showHomePage);
     connect(ui->live_capture, &QPushButton::clicked, this, &MainWindow::showLiveCapturePage);
@@ -48,9 +45,7 @@ void MainWindow::showFileCapturePage() {
 
 void MainWindow::showAlertsPage() {
     ui->contenu->setCurrentWidget(ui->pageAlerts);
-    database.getAlerts(200);
 }
 
 void MainWindow::handleClearDatabase() {
-    database.clearAlerts();
 }

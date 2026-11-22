@@ -48,7 +48,7 @@ Controller::~Controller() {
 
 void Controller::evaluate_flows(const std::vector<std::pair<FlowKey, FlowStats>>& flows) {
     for (const auto& [key, stats] : flows) {
-        FeatureVector fv = extractor.extract(key, stats, false);
+        FeatureVector fv = extractor.extract(key, stats, true);
         PredictionResult pred = Eng.predict(fv.get_features());
         if (pred.is_malicious) {
             Session_alerts++;

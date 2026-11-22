@@ -21,10 +21,10 @@ bool DB::connect(const QString& dbName) {
     db.setDatabaseName(dbName);
 
     if (!db.open()) {
-        qDebug() << "Erreur: Impossible d'ouvrir la base de donnees car: " << db.lastError().text();
+        qWarning() << "DB open error:" << db.lastError().text();
         return false;
     }
-    qDebug() << "Succes : Connecte a la base de donnees";
+    qWarning() << "Succes : Connecte a la base de donnees";
     return true;
 }
 
@@ -36,6 +36,10 @@ void DB::disconnect() {
 }
 
 bool DB::addAlert(const AlertEvent &alert) {
+    if (!db.isOpen()) {
+        qWarning() << "DB is not open in addAlert";
+        return false;
+    }
     QSqlQuery requete;
     requete.prepare("INSERT INTO alerts(timestamp_us,src_ip,dst_ip,src_port,dst_port,protocol,attack_type,confidence,anomaly_score,severity,action_taken)"
                     "VALUES (:time,:sip,:dip,:sport,:dport,:protocol,:type,:conf,:score,:sev,:action)");
@@ -53,10 +57,8 @@ bool DB::addAlert(const AlertEvent &alert) {
     if (requete.exec()) {
         return true;
     }
-    else {
-        qDebug() << "Erreur: " << requete.lastError().text();
-        return false;
-    }
+    qWarning() << "DB insert error:" << requete.lastError().text();
+    return false;
 }
 
 bool DB::clearAlerts() {
@@ -70,7 +72,7 @@ bool DB::clearAlerts() {
 
 std::vector<AlertEvent> DB::getAlerts(int limit) {
     std::vector<AlertEvent> alerts;
-    QSqlQuery query;
+    QSqlQuery query(db);
     query.prepare("SELECT * FROM alerts "
                   "ORDER BY timestamp_us DESC LIMIT :limit");
     query.bindValue(":limit",limit);
@@ -90,6 +92,9 @@ std::vector<AlertEvent> DB::getAlerts(int limit) {
             event.set_severity(string_to_severity(query.value("severity").toString().toStdString()));
             alerts.push_back(event);
         }
+    }
+    else {
+        qWarning() << "DB select error:" << query.lastError().text();
     }
     query.finish();
     return alerts;
