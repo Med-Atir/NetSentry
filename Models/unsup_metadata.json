@@ -3,6 +3,7 @@
     "input_name": "float_input",
     "score_output_name": "scores",
     "threshold": -0.12880455866032428,
+    "benign_gate": 1.01,
     "anomaly_condition": "score < threshold",
     "preprocessing": "log1p(max(x, 0.0f))",
     "num_features": 30,

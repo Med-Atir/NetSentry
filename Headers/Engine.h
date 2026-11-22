@@ -29,7 +29,8 @@ private:
     Ort::MemoryInfo memory_info_ ;
     std::vector<std::string> class_labels_;
     std::vector<float> class_thresholds_ ;
-    float anomaly_threshold_ ;
+    float benign_gate_ = 1.01f;
+    float anomaly_threshold_ = -0.1288f;
     size_t expected_features_ = 30;
     void load_lgbm_metadata(const std::string& json_path);
     void load_unsup_metadata(const std::string& json_path);

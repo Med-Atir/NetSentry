@@ -64,7 +64,8 @@ float Engine::run_isolation_forest(const std::vector<float> &log_features) {
 
 PredictionResult Engine::predict(const std::vector<float> &features) {
     std::vector<float> lgbm = run_lightgbm(features);
-    for (size_t i = 1;i < class_labels_.size();i++) {
+
+    for (size_t i = 1; i < class_labels_.size(); i++) {
         if (lgbm[i] >= class_thresholds_[i]) {
             PredictionResult p;
             p.score = lgbm[i];
@@ -74,9 +75,19 @@ PredictionResult Engine::predict(const std::vector<float> &features) {
             return p;
         }
     }
+
+    if (lgbm[0] >= benign_gate_) {
+        PredictionResult p;
+        p.score = lgbm[0];
+        p.engine_stage = "LGBM";
+        p.is_malicious = false;
+        p.label = "Benign";
+        return p;
+    }
+
     std::vector<float> log_features;
     log_features.reserve(features.size());
-    for (auto feat: features) {
+    for (auto feat : features) {
         log_features.push_back(std::log1p(std::max(feat, 0.0f)));
     }
     float iforest = run_isolation_forest(log_features);
@@ -88,6 +99,7 @@ PredictionResult Engine::predict(const std::vector<float> &features) {
         p.label = "ZERO-Day";
         return p;
     }
+
     PredictionResult p;
     p.score = lgbm[0];
     p.engine_stage = "Cascade";
