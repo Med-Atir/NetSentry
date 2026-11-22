@@ -175,7 +175,7 @@ These are *flagged* flows, not verified attacks: the capture has no per-flow gro
 
 ## ⚠️ Known limitations
 
-- **Botnet_Infiltration recall is 0.55.** About 45% of botnet flows in the test set are missed by Stage 1.
+- **Botnet_Infiltration recall is 0.55.** About 45% of flows in this class are missed by Stage 1. The class merges two very different labels (`Bot` and `Infilteration`), and infiltration traffic is typically the hardest class in CSE-CIC-IDS2018 because it looks like normal activity.
 - **The anomaly stage can raise false alarms on normal HTTPS traffic** in live capture, because live traffic is scored differently from the CSE-CIC benign flows it was trained on. The `benign_gate` limits how many confident-benign flows reach Stage 2, and calibrating the threshold on locally captured benign traffic is planned; before/after numbers will be added.
 - **Stage 2 trades recall for false alarms.** See the table above: catching most attacks on its own would need a 5-10% false-alarm rate.
 - **No cascade-level evaluation yet.** Stage 1 and Stage 2 are evaluated separately above; the combined pipeline's recall and false-positive rate (with and without the gate) are planned.
